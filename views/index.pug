@@ -1,0 +1,96 @@
+doctype html
+html
+  head
+    title My To Do List
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f3e8ff;
+        color: white;
+        padding: 2rem;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #e1bee7;
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+      }
+      h1 {
+        color: black;
+        margin-bottom: 1.5rem;
+      }
+      .task {
+        background: #ba68c8;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .task.danger {
+        background-color: #e57373;
+      }
+      .task.warning {
+        background-color: #ffb74d;
+      }
+      .delete-button {
+        background-color: transparent;
+        color: white;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border-radius: 50%;
+        padding: 5px 10px;
+        transition: background 0.3s;
+      }
+      .delete-button:hover {
+        background-color: #ce93d8;
+      }
+      .add-button {
+        margin-top: 20px;
+        background-color: #8e24aa;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+      }
+      .add-button:hover {
+        background-color: #6a1b9a;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .no-tasks {
+        color: black;
+        font-size: 1.2rem;
+  body
+    .container
+      h1 To Do List
+
+      if todos && todos.length > 0
+        each task in todos
+          - const now = new Date();
+          - const dueDate = new Date(task.due_date);
+          - const timeDiff = dueDate - now;
+          - const oneDay = 24 * 60 * 60 * 1000;
+          - const dangerClass = timeDiff < 0 ? 'danger' : (timeDiff < oneDay * 2 ? 'warning' : '')
+
+          .task(class=dangerClass)
+            a(href=`/task/${task.id}` style='color: white; text-decoration: none; display: flex; justify-content: space-between; width: 100%')
+              span #{task.task}
+              span #{task.due_date}
+            form(action=`/delete/${task.id}` method='POST' style='display:inline')
+              button.delete-button(type='submit') 🗑️
+      else
+        p.no-tasks No tasks found.
+
+      a(href='/add')
+        button.add-button Add Task

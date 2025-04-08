@@ -1,0 +1,34 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3e8ff;
+    color: #4a148c;
+    padding: 2rem;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #e1bee7;
+    padding: 2rem;
+    border-radius: 10px;
+  }
+  input[type="text"] {
+    width: 70%;
+    padding: 0.5rem;
+  }
+  button {
+    background-color: #8e24aa;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  button:hover {
+    background-color: #6a1b9a;
+  }
+  .done button {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+  
