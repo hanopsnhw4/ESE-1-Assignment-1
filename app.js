@@ -121,32 +121,45 @@ app.post('/delete/:id', checkAuth, (req, res) => {
 // Route to view and edit individual tasks
 app.get('/task/:id', checkAuth, (req, res) => {
   const { id } = req.params;
+  
   db.get('SELECT * FROM tasks WHERE id = ?', [id], (err, task) => {
-    if (err || !task) return res.status(404).send('Task not found');
+    if (err || !task) {
+      return res.status(404).send('Task not found');
+    }
     res.render('task', { task });
   });
 });
 
+
 app.get('/task/:id/edit', checkAuth, (req, res) => {
   const { id } = req.params;
+  
   db.get('SELECT * FROM tasks WHERE id = ?', [id], (err, task) => {
-    if (err || !task) return res.status(404).send('Task not found');
+    if (err || !task) {
+      return res.status(404).send('Task not found');
+    }
     res.render('edit', { task });
   });
 });
 
+
 app.post('/task/:id/edit', checkAuth, (req, res) => {
   const { id } = req.params;
   const { task, details, due_date } = req.body;
+  
   db.run(
     'UPDATE tasks SET task = ?, details = ?, due_date = ? WHERE id = ?',
     [task, details, due_date, id],
     (err) => {
       if (err) return res.status(500).send('Error updating task');
+      
+      // Redirect back to the task details page
       res.redirect(`/task/${id}`);
     }
   );
 });
+
+
 
 // Route for login and register
 app.get('/login', (req, res) => {

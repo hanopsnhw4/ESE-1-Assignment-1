@@ -62,7 +62,7 @@ html
       h1 Task: #{task.task}
       p Task Details: #{task.details}
       p Due Date: #{task.due_date}
-      a(href='/task/#{task.id}/edit')
+      a(href=`/task/${task.id}/edit`)
         button Edit Task
       form(action='/task/#{task.id}/delete' method='POST' style='display:inline')
         button(type='submit') Delete Task

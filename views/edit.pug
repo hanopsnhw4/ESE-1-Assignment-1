@@ -4,72 +4,84 @@ html
     title Edit Task
     style.
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
         background-color: #f3e8ff;
-        color: #333;
+        color: #6a1b9a;
         padding: 2rem;
       }
       .container {
         max-width: 600px;
-        margin: auto;
+        margin: 0 auto;
         background: #e1bee7;
         padding: 2rem;
         border-radius: 10px;
+        text-align: center;
+        position: relative;
       }
       h1 {
-        text-align: center;
-        color: #4a148c;
+        font-family: 'Arial', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #6a1b9a; /* Deep purple for headings */
+        margin-bottom: 1.5rem;
+        letter-spacing: 2px; /* Spacing between letters */
       }
-      .field {
-        margin: 1rem 0;
+      h2 {
+        font-family: 'Arial', sans-serif;
+        font-size: 2rem;
+        color: #8e24aa;
+        margin-bottom: 1rem;
+        text-transform: none; /* Keep text in normal case */
+        font-weight: 500;
+        letter-spacing: 1px; /* Add spacing between letters */
       }
-      label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-      }
-      input, textarea {
+      input[type="text"] {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
       }
-      .buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1rem;
-      }
-      .btn {
+      button {
+        background-color: #8e24aa;
+        color: white;
         padding: 10px 20px;
         border: none;
-        border-radius: 6px;
-        font-weight: bold;
+        border-radius: 25px;
         cursor: pointer;
-        color: white;
-        background-color: #8e24aa;
+        font-size: 1rem;
+        transition: background 0.3s;
       }
-      .btn:hover {
+      button:hover {
         background-color: #6a1b9a;
       }
+      /* Divider style */
+      .divider {
+        height: 1px;
+        background-color: #e1bee7; /* Light gray divider */
+        margin: 20px 0;
+      }
+
   body
-    a(href='/' style='position: absolute; top: 20px; left: 20px; font-size: 1.5rem; text-decoration: none') 🏠
-
     .container
-
       h1 Edit Task
 
-      form(action=`/task/${task.id}/edit`, method='POST')
-        .field
-          label(for='task') Task
-          input(type='text', name='task', value=task.task, required)
-
-        .field
+      .divider
+      form(action=`/task/${task.id}/edit` method='POST')
+        div
+          label(for='task') Task Name
+          input(type='text' name='task' value=task.task required)
+        .divider
+        div
           label(for='details') Details
-          textarea(name='details') #{task.details}
+          input(type='text' name='details' value=task.details required)
+        .divider
+        div
+          label(for='due_date') Due Date (DD/MM/YYYY)
+          input(type='text' name='due_date' value=task.due_date required)
+        .divider
+        div
+          button(type='submit') Save Changes
 
-        .field
-          label(for='due_date') Due Date
-          input(type='date', name='due_date', value=task.due_date)
-
-        .buttons
-          button.btn(type='submit') Save Changes
+      .divider
