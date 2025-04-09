@@ -21,42 +21,58 @@ html
         color: black;
         margin-bottom: 1.5rem;
       }
-      input[type="text"], input[type="date"], textarea {
+      input, textarea, button {
         width: 100%;
         padding: 10px;
-        margin-bottom: 10px;
-        font-size: 1rem;
-        border-radius: 5px;
+        margin: 10px 0;
+        border-radius: 8px;
         border: 1px solid #ccc;
       }
       button {
         background-color: #8e24aa;
         color: white;
-        padding: 10px 20px;
         border: none;
-        border-radius: 25px;
         cursor: pointer;
-        font-size: 1rem;
         transition: background 0.3s;
       }
       button:hover {
         background-color: #6a1b9a;
       }
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      .home-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 2rem;
+        text-decoration: none;
+        background: #ff4081;
+        padding: 12px 18px;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease-in-out;
+      }
+      .home-button:hover {
+        background-color: #ff80ab;
+        transform: scale(1.1);
+      }
 
   body
+    a.home-button(href='/') 🏠
     .container
-      a(href='/' style='position: absolute; top: 20px; left: 20px; font-size: 1.5rem; text-decoration: none') 🏠
-
-      h1 Add Task
-
+      h1 Add a New Task
+      if error
+        p.error=error
       form(action='/add' method='POST')
-        label(for='task') Task:
-        input(type='text' name='task' id='task' placeholder='Enter task' required)
-        
-        label(for='details') Details:
-        textarea(name='details' id='details' placeholder='Enter task details' rows='4' required)
-
-        label(for='due_date') Due Date:
-        input(type='date' name='due_date' id='due_date' required)
-
+        input(type='text' name='task' placeholder='Task name' required)
+        textarea(name='details' placeholder='Task details' rows='4') 
+        input(type='date' name='due_date' required)
         button(type='submit') Add Task

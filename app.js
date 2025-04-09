@@ -2,6 +2,8 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const path = require('path');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 const app = express();
 const db = new sqlite3.Database('./todo.db');
@@ -17,130 +19,97 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Create the tasks table if it doesn't already exist
+// Session middleware
+app.use(session({
+  secret: 'your_secret_key_here',
+  resave: false,
+  saveUninitialized: true
+}));
+
+// Middleware to protect routes
+function checkAuth(req, res, next) {
+  if (req.session && req.session.loggedIn) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+}
+
+// Create the tables if they don't already exist
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS tasks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       task TEXT,
       details TEXT,
-      due_date TEXT
+      due_date TEXT,
+      user_id INTEGER,
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE,
+      password TEXT
+    )
+  `);
+
   console.log('Database table setup complete.');
 });
 
-// ** REST API **
+// Main route for index page
+app.get('/', checkAuth, (req, res) => {
+  const userId = req.session.userId;
 
-// GET all tasks (REST API)
-app.get('/api/tasks', (req, res) => {
-  db.all('SELECT * FROM tasks', (err, rows) => {
+  db.all('SELECT * FROM tasks WHERE user_id = ?', [userId], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
-    }
-    res.json(rows);
-  });
-});
-
-// GET a specific task by ID (REST API)
-app.get('/api/tasks/:id', (req, res) => {
-  const { id } = req.params;
-  db.get('SELECT * FROM tasks WHERE id = ?', [id], (err, row) => {
-    if (err || !row) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
-    res.json(row);
-  });
-});
-
-// POST a new task (REST API)
-app.post('/api/tasks', (req, res) => {
-  const { task, details, due_date } = req.body;
-  db.run(
-    'INSERT INTO tasks (task, details, due_date) VALUES (?, ?, ?)',
-    [task, details, due_date],
-    function (err) {
-      if (err) {
-        return res.status(500).json({ error: 'Error adding task' });
-      }
-      res.status(201).json({ id: this.lastID, task, details, due_date });
-    }
-  );
-});
-
-// PUT (update) an existing task (REST API)
-app.put('/api/tasks/:id', (req, res) => {
-  const { id } = req.params;
-  const { task, details, due_date } = req.body;
-
-  db.run(
-    'UPDATE tasks SET task = ?, details = ?, due_date = ? WHERE id = ?',
-    [task, details, due_date, id],
-    function (err) {
-      if (err) {
-        return res.status(500).json({ error: 'Error updating task' });
-      }
-      if (this.changes === 0) {
-        return res.status(404).json({ error: 'Task not found' });
-      }
-      res.json({ id, task, details, due_date });
-    }
-  );
-});
-
-// DELETE a task (REST API)
-app.delete('/api/tasks/:id', (req, res) => {
-  const { id } = req.params;
-
-  db.run('DELETE FROM tasks WHERE id = ?', [id], function (err) {
-    if (err) {
-      return res.status(500).json({ error: 'Error deleting task' });
-    }
-    if (this.changes === 0) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
-    res.status(204).send();
-  });
-});
-
-// ** Pug Views **
-
-// Main page: Display all tasks
-app.get('/', (req, res) => {
-  db.all('SELECT * FROM tasks', (err, rows) => {
-    if (err) {
-      return res.render('index', { error: 'Database error', tasks: [] });
+      return res.render('index', { error: 'Database error', tasks: [], loggedIn: true });
     }
 
-    // Pass tasks to the index.pug with proper logic for danger class
     res.render('index', {
       todos: rows || [],
+      loggedIn: req.session.loggedIn 
     });
   });
 });
 
-// Page for adding a new task
-app.get('/add', (req, res) => {
+// Route for adding tasks
+app.get('/add', checkAuth, (req, res) => {
   res.render('add');
 });
 
-// Add a new task to the database
-app.post('/add', (req, res) => {
-  const { task, details, due_date } = req.body;
+app.post('/add', checkAuth, (req, res) => {
+  const { task, details, due_date } = req.body;  // Getting task details from the form submission
+  const userId = req.session.userId;  // The logged-in user's ID
+  
+  // Simple validation to ensure task and due date are provided
+  if (!task || !due_date) {
+    return res.render('add', { error: 'Task name and due date are required' });
+  }
+
+  // Insert the task into the database
   db.run(
-    'INSERT INTO tasks (task, details, due_date) VALUES (?, ?, ?)',
-    [task, details, due_date],
+    'INSERT INTO tasks (task, details, due_date, user_id) VALUES (?, ?, ?, ?)',
+    [task, details, due_date, userId],
     function (err) {
       if (err) {
+        console.error('Error adding task:', err);  // Log error for debugging
         return res.render('add', { error: 'Error adding task' });
       }
-      res.redirect('/');
+      
+      // After adding the task, redirect to home with success message
+      res.redirect('/?message=Task+added+successfully');
+
+      
     }
   );
 });
 
-// Delete a task from the database (from main page)
-app.post('/delete/:id', (req, res) => {
+
+// Route to delete tasks
+app.post('/delete/:id', checkAuth, (req, res) => {
   const id = req.params.id;
   db.run('DELETE FROM tasks WHERE id = ?', [id], (err) => {
     if (err) {
@@ -150,8 +119,8 @@ app.post('/delete/:id', (req, res) => {
   });
 });
 
-// View task
-app.get('/task/:id', (req, res) => {
+// Route to view and edit individual tasks
+app.get('/task/:id', checkAuth, (req, res) => {
   const { id } = req.params;
   db.get('SELECT * FROM tasks WHERE id = ?', [id], (err, task) => {
     if (err || !task) return res.status(404).send('Task not found');
@@ -159,8 +128,7 @@ app.get('/task/:id', (req, res) => {
   });
 });
 
-// Edit page
-app.get('/task/:id/edit', (req, res) => {
+app.get('/task/:id/edit', checkAuth, (req, res) => {
   const { id } = req.params;
   db.get('SELECT * FROM tasks WHERE id = ?', [id], (err, task) => {
     if (err || !task) return res.status(404).send('Task not found');
@@ -168,8 +136,7 @@ app.get('/task/:id/edit', (req, res) => {
   });
 });
 
-// Save task edits
-app.post('/task/:id/edit', (req, res) => {
+app.post('/task/:id/edit', checkAuth, (req, res) => {
   const { id } = req.params;
   const { task, details, due_date } = req.body;
   db.run(
@@ -182,18 +149,76 @@ app.post('/task/:id/edit', (req, res) => {
   );
 });
 
-// Delete task (with confirmation in Pug)
-app.post('/task/:id/delete', (req, res) => {
-  const { id } = req.params;
-  db.run('DELETE FROM tasks WHERE id = ?', [id], (err) => {
-    if (err) return res.status(500).send('Error deleting task');
-    res.redirect('/');
+// Route for login and register
+app.get('/login', (req, res) => {
+  res.render('login', { error: null });
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+    if (err || !user) {
+      return res.render('login', { error: 'Invalid username or password' });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (match) {
+      req.session.loggedIn = true;
+      req.session.username = username;
+      req.session.userId = user.id; // Save the user ID in session
+      res.redirect('/');
+    } else {
+      res.render('login', { error: 'Invalid username or password' });
+    }
   });
 });
 
+app.get('/register', (req, res) => {
+  res.render('register', { error: null });
+});
 
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body;
 
-// Start the server
+  if (!username || !password) {
+    return res.render('register', { error: 'Username and password are required' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    db.run(
+      'INSERT INTO users (username, password) VALUES (?, ?)',
+      [username, hashedPassword],
+      function (err) {
+        if (err) {
+          if (err.message.includes('UNIQUE constraint')) {
+            return res.render('register', { error: 'Username already exists' });
+          }
+          return res.render('register', { error: 'Error creating account' });
+        }
+        req.session.loggedIn = true;
+        req.session.username = username;
+        req.session.userId = this.lastID; // Save the user ID in session
+        res.redirect('/');
+      }
+    );
+  } catch (err) {
+    res.render('register', { error: 'Server error' });
+  }
+});
+
+// Logout route
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send('Error logging out');
+    }
+    res.redirect('/login');
+  });
+});
+
+// Start server
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
