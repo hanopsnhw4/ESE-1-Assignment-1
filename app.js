@@ -56,24 +56,6 @@ db.serialize(() => {
     )
   `);
 
-   // Check if the tasks table has a user_id column; if not, add it
-   db.all("PRAGMA table_info(tasks);", (err, columns) => {
-    if (err) {
-      console.error("Error checking tasks table columns:", err);
-    } else {
-      const hasUserId = columns.some(col => col.name === "user_id");
-      if (!hasUserId) {
-        db.run("ALTER TABLE tasks ADD COLUMN user_id INTEGER;", (alterErr) => {
-          if (alterErr) {
-            console.error("Failed to add user_id column:", alterErr);
-          } else {
-            console.log("user_id column added to tasks table.");
-          }
-        });
-      }
-    }
-  });
-
   console.log('Database table setup complete.');
 });
 

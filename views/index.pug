@@ -33,6 +33,9 @@ html
       .task.danger {
         background-color: #e57373;
       }
+      .task.warning {
+        background-color: #ffb74d;
+      }
       .delete-button {
         background-color: transparent;
         color: white;
@@ -109,17 +112,21 @@ html
       if todos && todos.length > 0
         each task in todos
           - const now = new Date();
-          - const date = new Date(task.due_date)
-          - const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
-          - const timeDiff = formattedDate - now;
-          - const oneDay = 24 * 60 * 60 * 1000;
-          - const dangerClass = timeDiff < 0 || timeDiff < oneDay * 2 ? 'danger' : ''
+          - const dueDate = new Date(task.due_date);
+          - const formattedDate = `${String(dueDate.getDate()).padStart(2, '0')}/${String(dueDate.getMonth() + 1).padStart(2, '0')}/${dueDate.getFullYear()}`
+          - const timeDiff = dueDate - now;  // Get the difference in milliseconds
+          - const oneDay = 24 * 60 * 60 * 1000;  // Milliseconds in a day
+          - const twoDays = 2 * oneDay;  // Two days in milliseconds
+          - const threeDays = 3 * oneDay;  // Three days in milliseconds
+          - const dangerClass = timeDiff < 0 ? 'danger' : ''; // Overdue task
+          - const warningClass = timeDiff >= 0 && timeDiff <= twoDays ? 'warning' : ''; // Due within 2 days
 
-          .task(class=dangerClass)
+          .task(class= dangerClass + ' ' + warningClass)
             a(href=`/task/${task.id}`) #{task.task}
             span= formattedDate
             form(action=`/delete/${task.id}` method='POST' style='display:inline')
               button.delete-button(type='submit') 🗑️
+
       else
         p.no-tasks No tasks found.
 
@@ -129,3 +136,4 @@ html
       if loggedIn
         form(action='/logout' method='POST')
           button.logout-button(type='submit') Logout
+
