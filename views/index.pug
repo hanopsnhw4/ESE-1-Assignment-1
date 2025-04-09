@@ -109,14 +109,15 @@ html
       if todos && todos.length > 0
         each task in todos
           - const now = new Date();
-          - const dueDate = new Date(task.due_date);
-          - const timeDiff = dueDate - now;
+          - const date = new Date(task.due_date)
+          - const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+          - const timeDiff = formattedDate - now;
           - const oneDay = 24 * 60 * 60 * 1000;
           - const dangerClass = timeDiff < 0 || timeDiff < oneDay * 2 ? 'danger' : ''
 
           .task(class=dangerClass)
             a(href=`/task/${task.id}`) #{task.task}
-            span #{task.due_date}
+            span= formattedDate
             form(action=`/delete/${task.id}` method='POST' style='display:inline')
               button.delete-button(type='submit') 🗑️
       else

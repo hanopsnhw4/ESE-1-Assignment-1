@@ -56,6 +56,24 @@ db.serialize(() => {
     )
   `);
 
+   // Check if the tasks table has a user_id column; if not, add it
+   db.all("PRAGMA table_info(tasks);", (err, columns) => {
+    if (err) {
+      console.error("Error checking tasks table columns:", err);
+    } else {
+      const hasUserId = columns.some(col => col.name === "user_id");
+      if (!hasUserId) {
+        db.run("ALTER TABLE tasks ADD COLUMN user_id INTEGER;", (alterErr) => {
+          if (alterErr) {
+            console.error("Failed to add user_id column:", alterErr);
+          } else {
+            console.log("user_id column added to tasks table.");
+          }
+        });
+      }
+    }
+  });
+
   console.log('Database table setup complete.');
 });
 
@@ -65,15 +83,16 @@ app.get('/', checkAuth, (req, res) => {
 
   db.all('SELECT * FROM tasks WHERE user_id = ?', [userId], (err, rows) => {
     if (err) {
-      return res.render('index', { error: 'Database error', tasks: [], loggedIn: true });
+      return res.render('index', { error: 'Database error', todos: [], loggedIn: true });
     }
 
     res.render('index', {
       todos: rows || [],
-      loggedIn: req.session.loggedIn 
+      loggedIn: true
     });
   });
 });
+
 
 // Route for adding tasks
 app.get('/add', checkAuth, (req, res) => {
@@ -81,31 +100,29 @@ app.get('/add', checkAuth, (req, res) => {
 });
 
 app.post('/add', checkAuth, (req, res) => {
-  const { task, details, due_date } = req.body;  // Getting task details from the form submission
-  const userId = req.session.userId;  // The logged-in user's ID
-  
-  // Simple validation to ensure task and due date are provided
+  const { task, details, due_date } = req.body;
+  const userId = req.session.userId;
+
   if (!task || !due_date) {
-    return res.render('add', { error: 'Task name and due date are required' });
+    // Redirect back to add page without rendering an error
+    return res.redirect('/add');
   }
 
-  // Insert the task into the database
   db.run(
     'INSERT INTO tasks (task, details, due_date, user_id) VALUES (?, ?, ?, ?)',
     [task, details, due_date, userId],
     function (err) {
       if (err) {
-        console.error('Error adding task:', err);  // Log error for debugging
-        return res.render('add', { error: 'Error adding task' });
+        console.error('Error adding task:', err);
+        // Silently redirect even if error occurs
+        return res.redirect('/');
       }
-      
-      // After adding the task, redirect to home with success message
-      res.redirect('/?message=Task+added+successfully');
-
-      
+      // Task added successfully
+      res.redirect('/');
     }
   );
 });
+
 
 
 // Route to delete tasks
