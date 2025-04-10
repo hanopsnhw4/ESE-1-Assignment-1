@@ -260,3 +260,42 @@ npm start
 - Relevant Code:
 
     - The CSS in the style block adapts various elements like the task list, task view, and buttons to different screen sizes using media queries.
+
+
+### Known Issues and Future Enhancements
+
+Known Issues:
+1. No User Feedback on Successful Task Deletion:
+
+    - Issue: After deleting a task, there is no clear feedback to the user to indicate that the action was successful.
+
+    - Impact: Users may not know if the task was actually deleted unless they manually refresh the page or check the task list.
+
+2. Date Format Inconsistency:
+
+    - Issue: The date format for task due dates is not consistent across different pages.
+
+    - Impact: Users may get confused if dates are displayed differently on the task list and task details page.
+
+Future Enhancements:
+1. Deletion Confirmation Pop-up:
+
+    - Improvement: Introduce a pop-up modal asking the user to confirm the deletion of a task before proceeding.
+
+    - Benefit: Prevents accidental deletions and gives users a chance to reconsider before deleting a task.
+
+2. User Feedback on Successful Deletion:
+
+    - Improvement: Provide a message or redirect users to the index page with a success notification after a task is deleted.
+
+    - Benefit: Users will know their action has been successful and the task has been removed.
+
+3. Task Sorting by Due Date and Priority:
+
+    - Improvement: Implement sorting functionality to allow users to view tasks by due date or priority.
+
+    - Benefit: Users can better manage their tasks and focus on the most urgent ones first.
+
+
+### References
+Gen Ai tools such as Chat GPT were used to format the Read Me doc and tidy up parts of my code to make it all more readable and understandable
