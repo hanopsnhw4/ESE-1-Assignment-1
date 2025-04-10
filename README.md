@@ -3,6 +3,7 @@
 ### Contents
 [Solution Overview and Project Aim](#solution-overview-and-project-aim)
 [Project Objectives](#project-objectives)
+[Enterprise Considerations](#enterprise-considerations)
 
 
 
@@ -85,3 +86,38 @@ The application is deployed on Render, a cloud platform that simplifies the depl
 - Scalability and Hosting: Render provides a fully managed platform for hosting the application. As traffic increases, Render automatically scales the resources allocated to the application, ensuring that it remains performant under varying loads.
 
 - Zero Downtime Deployments: Render supports zero-downtime deployments, which means the application remains available to users even during updates. This improves the user experience and ensures high availability.
+
+
+### Installation and Usage Instructions
+
+### Prerequisites
+
+To run this application, you’ll need the following technologies and tools. If you’re using GitHub Codespaces, these tools are pre-configured for you. If you plan to run the project on your local machine, please make sure you have the following installed:
+
+- GitHub Account: You need to have a GitHub account to access the repository and clone the project. Sign up at github.com.
+
+- GitHub Codespaces (Recommended): If you're using GitHub Codespaces, this will automatically handle most of the environment setup for you. Follow the GitHub Codespaces documentation for more details on setting up and using Codespaces.
+
+If you're running the app locally:
+
+- Node.js: This application is built using Node.js. Download and install the latest stable version from nodejs.org.
+
+- npm (Node Package Manager): npm is required to install the project’s dependencies. It comes bundled with Node.js, so if you’ve installed Node.js, npm will already be installed.
+
+- SQLite3: This application uses SQLite as its database. SQLite is a serverless, self-contained SQL database engine. Download and install SQLite from sqlite.org. Alternatively, if you're using GitHub Codespaces, SQLite will be automatically available.
+
+- REST API: The application follows the REST architecture style, and the backend provides API endpoints to handle data operations (e.g., creating, updating, and deleting tasks). Familiarity with REST APIs and HTTP methods (GET, POST, PUT, DELETE) is useful when working with the backend.
+
+- Pug (formerly Jade): This application uses Pug as the templating engine to render views on the frontend. It compiles HTML from Pug templates, which are used to dynamically display content on the client side. Ensure Pug is included in the package.json file as a dependency (this is typically handled automatically when you install dependencies).
+
+### Setup Steps
+
+1. Clone the Repository:
+
+- Go to the GitHub repository: ESE-1-Assignment-1.
+
+- Click on the Code button, then click Open with Codespaces to open the project in a new GitHub Codespace. Alternatively, if you’re running the project locally, clone the repository to your machine:
+
+```
+git clone https://github.com/hanopsnhw4/ESE-1-Assignment-1.git
+```
