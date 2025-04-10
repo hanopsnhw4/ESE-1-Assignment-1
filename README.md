@@ -121,3 +121,46 @@ If you're running the app locally:
 ```
 git clone https://github.com/hanopsnhw4/ESE-1-Assignment-1.git
 ```
+
+2. Install Dependencies:
+
+- In your Codespace or local project folder, install the necessary dependencies by running:
+
+```
+npm install
+```
+- This will install all required libraries, including Express, Pug, and other dependencies listed in the package.json file.
+
+3. Database Setup:
+
+- This application uses SQLite for data storage. When the application starts for the first time, SQLite will automatically create the database file and required tables.
+
+- If you need to manually create the database or reset it, delete the existing database file and restart the app, which will create a fresh database.
+
+### Running the Application
+
+1. Start the Backend Server:
+
+- In the Codespace terminal or your local machine terminal, run the following command to start the backend server:
+
+```
+npm start
+```
+
+- This will start the server on the specified port (usually 3000), and the backend will serve both the API and the Pug-based views.
+
+2. Frontend and Views:
+
+- The frontend is served directly by the backend through Pug templates, so once the backend is running, the views will automatically be available when you visit the app in a browser.
+
+3. Access the Application:
+
+- If you're using GitHub Codespaces, click Open in Browser to view the app.
+
+- If you're running the application locally, visit http://localhost:3000 in your browser to view the app.
+
+4. For Production Deployment:
+
+- If you wish to deploy the application to a cloud service like Render or Heroku, follow the deployment instructions provided by those platforms.
+
+- You’ll need to set up appropriate environment variables (e.g., database path, port) and push the code to your GitHub repository.
