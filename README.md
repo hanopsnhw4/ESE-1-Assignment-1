@@ -5,7 +5,7 @@
 [Project Objectives](#project-objectives)
 [Enterprise Considerations](#enterprise-considerations)
 [Installation and Usage Instructions](#installation-and-usage-instructions)
-[[Feature Overview](#feature-overview)
+[Feature Overview](#feature-overview)
 
 
 
@@ -171,92 +171,92 @@ npm start
 ### Feature Overview
 
 1. User Authentication
-Purpose:
+- Purpose:
 
-- Allows users to sign up, log in, and maintain a session throughout the app. This ensures that tasks are associated with specific users.
+    - Allows users to sign up, log in, and maintain a session throughout the app. This ensures that tasks are associated with specific users.
 
-- Secures user data and only allows authenticated users to access and modify their tasks.
+    - Secures user data and only allows authenticated users to access and modify their tasks.
 
-Code Location:
+- Code Location:
 
-- The authentication logic is implemented in app.js under the routes for POST /login and POST /signup and the middleware for session management.
+    - The authentication logic is implemented in app.js under the routes for POST /login and POST /signup and the middleware for session management.
 
-Relevant Endpoints:
+- Relevant Endpoints:
 
-- POST /login: Authenticates the user and creates a session.
+    - POST /login: Authenticates the user and creates a session.
 
-- POST /register: Registers a new user in the database.
+    - POST /register: Registers a new user in the database.
 
-- POST /logout: Logs the user out and destroys the session.
+    - POST /logout: Logs the user out and destroys the session.
 
 
 (Additional) Logout Functionality
-Purpose:
+- Purpose:
 
-- Allows users to log out of their accounts, ending the session and preventing unauthorized access to their data after they've left the app.
+    - Allows users to log out of their accounts, ending the session and preventing unauthorized access to their data after they've left the app.
 
-Code Location:
+- Code Location:
 
-- The logout route is defined in app.js, which destroys the session when a user logs out.
+    - The logout route is defined in app.js, which destroys the session when a user logs out.
 
-Relevant Endpoints:
+- Relevant Endpoints:
 
-- POST /logout: Logs the user out of the application by destroying the session.
+    - POST /logout: Logs the user out of the application by destroying the session.
 
 
 
 
 2. Task Management
-Purpose:
+- Purpose:
 
-- This feature allows users to create, view, edit, and delete tasks. It serves as the core functionality of the app, helping users organize their to-dos based on due dates and priority levels.
+    - This feature allows users to create, view, edit, and delete tasks. It serves as the core functionality of the app, helping users organize their to-dos based on due dates and priority levels.
 
-Code Location:
+- Code Location:
 
-- The task management logic is primarily located in app.js under the routes for creating, deleting, and editing tasks.
+    - The task management logic is primarily located in app.js under the routes for creating, deleting, and editing tasks.
 
-- The task views are rendered using Pug templates, specifically index.pug, task.pug, and edit.pug.
+    - The task views are rendered using Pug templates, specifically index.pug, task.pug, and edit.pug.
 
-Relevant Endpoints:
+- Relevant Endpoints:
 
-- POST /add: Creates a new task.
+    - POST /add: Creates a new task.
 
-- GET /tasks: Displays all tasks for the logged-in user on the index page.
+    - GET /tasks: Displays all tasks for the logged-in user on the index page.
 
-- GET /task/:id: Displays the details of a specific task.
+    - GET /task/:id: Displays the details of a specific task.
 
-- GET /task/:id/edit: Displays the form to edit a task.
+    - GET /task/:id/edit: Displays the form to edit a task.
 
-- POST /edit/:id: Saves changes made to a task.
+    - POST /edit/:id: Saves changes made to a task.
 
-- POST /delete/:id: Deletes a task from the database.
+    - POST /delete/:id: Deletes a task from the database.
 
 
 3. Task Sorting and Filtering
-Purpose:
+- Purpose:
 
-- Tasks are colour-coded based on their due dates to provide better visual organization. Tasks are also sorted by their due date, allowing users to easily identify which tasks are due soon or overdue.
+    - Tasks are colour-coded based on their due dates to provide better visual organization. Tasks are also sorted by their due date, allowing users to easily identify which tasks are due soon or overdue.
 
-Code Location:
+- Code Location:
 
-- The logic for determining which tasks are close to the due date or overdue is located in app.js, within the task rendering logic. The CSS styles that colour the tasks are defined in the embedded style block in index.pug.
+    - The logic for determining which tasks are close to the due date or overdue is located in app.js, within the task rendering logic. The CSS styles that colour the tasks are defined in the embedded style block in index.pug.
 
-Relevant Code and Logic:
+- Relevant Code and Logic:
 
-- In app.js, logic is implemented to check the difference between the current date and the task’s due date to apply the correct classes (danger, warning).
+    - In app.js, logic is implemented to check the difference between the current date and the task’s due date to apply the correct classes (danger, warning).
 
-- In index.pug, classes like .task.danger and .task.warning are applied dynamically to tasks.
+    - In index.pug, classes like .task.danger and .task.warning are applied dynamically to tasks.
 
 
 4. Responsive Design
-Purpose:
+- Purpose:
 
-- Ensures that the app is mobile-friendly and looks good on various screen sizes by using flexible layouts and adaptive styling.
+    - Ensures that the app is mobile-friendly and looks good on various screen sizes by using flexible layouts and adaptive styling.
 
-Code Location:
+- Code Location:
 
-- The responsive styling is handled directly in the style block inside the index.pug template, where media queries adjust the layout based on the screen size.
+    - The responsive styling is handled directly in the style block inside the index.pug template, where media queries adjust the layout based on the screen size.
 
-Relevant Code:
+- Relevant Code:
 
-- The CSS in the style block adapts various elements like the task list, task view, and buttons to different screen sizes using media queries.
+    - The CSS in the style block adapts various elements like the task list, task view, and buttons to different screen sizes using media queries.
