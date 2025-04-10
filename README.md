@@ -6,6 +6,8 @@
 [Enterprise Considerations](#enterprise-considerations)
 [Installation and Usage Instructions](#installation-and-usage-instructions)
 [Feature Overview](#feature-overview)
+[Known Issues and Future Enhancements](#known-issues-and-future-enhancements)
+[References](#references)
 
 
 
